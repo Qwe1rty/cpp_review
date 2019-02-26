@@ -17,27 +17,28 @@ namespace data
 
         /* Aliases */
         using value_type        = T;
-        using reference         = T&;
-        using const_reference   = const T&;
+        using reference         = value_type&;
+        using const_reference   = const value_type&;
+        using move_reference    = value_type&&;
         using size_type         = int; // https://www.aristeia.com/Papers/C++ReportColumns/sep95.pdf
 
         /* Special member functions */
-        avl_tree() = default;
+        avl_tree()  = default;
         ~avl_tree() = default;
-        avl_tree(const avl_tree<T>& src);
-        avl_tree(avl_tree<T>&& src) noexcept;
-        avl_tree<T>& operator= (const avl_tree<T>& src);
-        avl_tree<T>& operator= (avl_tree<T>&& src);
+        avl_tree(const avl_tree<value_type>& src);
+        avl_tree(avl_tree<value_type>&& src) noexcept;
+        avl_tree<value_type>& operator= (const avl_tree<value_type>& src);
+        avl_tree<value_type>& operator= (avl_tree<value_type>&& src);
 
         /* Interface functions */
-        bool empty() const noexcept;
-        bool contains(const value_type& val) const;
         size_type size() const noexcept;
         size_type height() const noexcept;
-        void remove(const value_type& val);
-        void remove(value_type&& val);
-        void insert(const value_type& val);
-        void insert(value_type&& val);
+        bool contains(const_reference val) const;
+        bool empty() const noexcept;
+        void remove(const_reference val);
+        void remove(move_reference  val);
+        void insert(const_reference val);
+        void insert(move_reference  val);
         template<typename...Args> void emplace(Args&&... args);
 
         /* Friend functions */
@@ -48,21 +49,37 @@ namespace data
 
     private:
 
+        /* Fields */
+        std::unique_ptr<node> head;
+
+        /* Node struct */
         struct node
         {
+            /* Special member functions (node) */
+            node() = delete;
+            node(const_reference src);
+            node(move_reference  src);
             ~node();
             node(const node& src);
             node(node&& src) noexcept;
 
-            value_type value;
+            /* AVL functions */
+
+            bool contains(const_reference val) const;
+            std::unique_ptr<node> insert(move_reference val);
+            std::unique_ptr<node> remove(move_reference val);
+            std::unique_ptr<node> rotate_right();
+            std::unique_ptr<node> rotate_left();
+            int update_stats();
+
+            /* Fields (node) */
+            node* parent = nullptr;
             std::unique_ptr<node> left;
             std::unique_ptr<node> right;
-            size_type node_height = 0;
+            value_type val;
+            size_type tree_size = 1;
+            size_type tree_height = 1;
         };
-
-        size_type tree_size = 0;
-        size_type tree_height = 0;
-        std::unique_ptr<node> head;
     };
 }
 
