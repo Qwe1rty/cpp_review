@@ -1,13 +1,13 @@
 #include <iostream>
 #include <vector>
 
-#include "data/tree/avl_tree.h"
+#include "data/tree/AvlTree.h"
 
 int main() {
 
     std::cout << "Hello, World!" << std::endl;
 
-    data::avl_tree<int> avlTree();
+//    data::AvlTree<int> avlTree();
 
     return 0;
 }
