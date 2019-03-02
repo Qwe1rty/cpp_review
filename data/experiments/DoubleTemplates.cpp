@@ -67,8 +67,8 @@ int main() {
     p2.set(CopyOnlyThing());
     std::cout << '\n';
 
-    // Error: tries to call Ping<MoveOnlyThing>::set(const MoveOnlyThing& val)
-    //        but cannot be copied
+    // Error: calls Ping<MoveOnlyThing>::set(const MoveOnlyThing& val) but errors
+    //        on construction due to lack of copy constructor
 //    MoveOnlyThing m;
 //    p3.set(m);
 //    std::cout << '\n';

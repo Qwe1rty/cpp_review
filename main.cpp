@@ -3,11 +3,8 @@
 
 #include "data/tree/AvlTree.h"
 
-int main() {
-
-    std::cout << "Hello, World!" << std::endl;
-
-//    data::AvlTree<int> avlTree();
-
+int main()
+{
+    std::cout << "Hello, World!\n";
     return 0;
 }
