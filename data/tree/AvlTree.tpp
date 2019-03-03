@@ -148,39 +148,29 @@ inline data::AvlTree<T>::Node::Node(T&& src) :
  */
 
 template<typename T>
-typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::rotate_left(Node* node)
+void data::AvlTree<T>::Node::print(std::ostream& os, const Node* node, const int depth)
 {
-    Node* newHead = node->right_.release();
+    if (node)
+    {
+        print(os, node->right_.get(), depth + 1);
 
-    // Transfer ownership of node->right_->left_ to node
-    node->right_ = std::move(newHead->left_);
-    if (node->right_) { node->right_->parent_ = node; }
+        for (int i = 0; i < depth; ++i) { os << "  "; }
+        os << *node->val_ << '\n';
 
-    // Made newHead the new head
-    node->parent_ = newHead;
-    newHead->left_.reset(node);
-
-    update_stats(node);
-    update_stats(newHead);
-    return newHead;
+        print(os, node->left_.get(), depth + 1);
+    }
 }
 
 template<typename T>
-typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::rotate_right(Node* node)
+inline typename data::AvlTree<T>::size_type data::AvlTree<T>::Node::get_size(const Node* node) noexcept
 {
-    Node *newHead = node->left_.release();
+    return node ? node->size_ : 0;
+}
 
-    // Transfer ownership of node->left_->right_ to node
-    node->left_ = std::move(newHead->right_);
-    if (node->left_) { node->left_->parent_ = node; }
-
-    // Made newHead the new head
-    node->parent_ = newHead;
-    newHead->right_.reset(node);
-
-    update_stats(node);
-    update_stats(newHead);
-    return newHead;
+template<typename T>
+inline typename data::AvlTree<T>::size_type data::AvlTree<T>::Node::get_height(const Node* node) noexcept
+{
+    return node ? node->height_ : 0;
 }
 
 // TODO: see if all the 3-line process-parent-reset can be correctly reduced to 2 lines
@@ -235,6 +225,42 @@ typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::insert(V&& val, Node* n
  */
 
 template<typename T>
+typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::rotate_left(Node* node)
+{
+    Node* newHead = node->right_.release();
+
+    // Transfer ownership of node->right_->left_ to node
+    node->right_ = std::move(newHead->left_);
+    if (node->right_) { node->right_->parent_ = node; }
+
+    // Made newHead the new head
+    node->parent_ = newHead;
+    newHead->left_.reset(node);
+
+    update_stats(node);
+    update_stats(newHead);
+    return newHead;
+}
+
+template<typename T>
+typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::rotate_right(Node* node)
+{
+    Node *newHead = node->left_.release();
+
+    // Transfer ownership of node->left_->right_ to node
+    node->left_ = std::move(newHead->right_);
+    if (node->left_) { node->left_->parent_ = node; }
+
+    // Made newHead the new head
+    node->parent_ = newHead;
+    newHead->right_.reset(node);
+
+    update_stats(node);
+    update_stats(newHead);
+    return newHead;
+}
+
+template<typename T>
 inline void data::AvlTree<T>::Node::update_stats(Node* node)
 {
     if (node)
@@ -248,30 +274,4 @@ template<typename T>
 inline int data::AvlTree<T>::Node::delta(const Node* node) noexcept
 {
     return get_height(node->right_.get()) - get_height(node->left_.get());
-}
-
-template<typename T>
-inline typename data::AvlTree<T>::size_type data::AvlTree<T>::Node::get_size(const Node* node) noexcept
-{
-    return node ? node->size_ : 0;
-}
-
-template<typename T>
-inline typename data::AvlTree<T>::size_type data::AvlTree<T>::Node::get_height(const Node* node) noexcept
-{
-    return node ? node->height_ : 0;
-}
-
-template<typename T>
-void data::AvlTree<T>::Node::print(std::ostream& os, const Node* node, const int depth)
-{
-    if (node)
-    {
-        print(os, node->right_.get(), depth + 1);
-
-        for (int i = 0; i < depth; ++i) { os << "  "; }
-        os << *node->val_ << '\n';
-
-        print(os, node->left_.get(), depth + 1);
-    }
 }

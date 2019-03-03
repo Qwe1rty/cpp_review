@@ -11,6 +11,12 @@
 namespace data
 {
     template<typename T> class AvlTree;
+    template<typename T> bool operator== (const AvlTree<T>&, const AvlTree&);
+    template<typename T> bool operator!= (const AvlTree<T>&, const AvlTree&);
+    template<typename T> bool operator<  (const AvlTree<T>&, const AvlTree&);
+    template<typename T> bool operator<= (const AvlTree<T>&, const AvlTree&);
+    template<typename T> bool operator>  (const AvlTree<T>&, const AvlTree&);
+    template<typename T> bool operator>= (const AvlTree<T>&, const AvlTree&);
     template<typename T> std::ostream& operator<< (std::ostream&, const AvlTree<T>&);
 
     template<typename T>
@@ -46,18 +52,12 @@ namespace data
         template<typename...Args> void emplace(Args&&... args);
 
         /* Relational operator overloads */
-        template<typename U>
-        friend bool operator== (const AvlTree<U>&, const AvlTree<U>&);
-        template<typename U>
-        friend bool operator!= (const AvlTree<U>&, const AvlTree<U>&);
-        template<typename U>
-        friend bool operator<  (const AvlTree<U>&, const AvlTree<U>&);
-        template<typename U>
-        friend bool operator<= (const AvlTree<U>&, const AvlTree<U>&);
-        template<typename U>
-        friend bool operator>  (const AvlTree<U>&, const AvlTree<U>&);
-        template<typename U>
-        friend bool operator>= (const AvlTree<U>&, const AvlTree<U>&);
+        friend bool operator== <T>(const AvlTree<T>&, const AvlTree<T>&);
+        friend bool operator!= <T>(const AvlTree<T>&, const AvlTree<T>&);
+        friend bool operator<  <T>(const AvlTree<T>&, const AvlTree<T>&);
+        friend bool operator<= <T>(const AvlTree<T>&, const AvlTree<T>&);
+        friend bool operator>  <T>(const AvlTree<T>&, const AvlTree<T>&);
+        friend bool operator>= <T>(const AvlTree<T>&, const AvlTree<T>&);
 
         /* Other operator overloads */
         friend std::ostream& operator<< <T>(std::ostream&, const AvlTree<T>&);
@@ -77,9 +77,10 @@ namespace data
             explicit Node(const T& src);
             explicit Node(T&& src);
 
-            /* AVL functions */
-            static Node* rotate_left(Node* node);
-            static Node* rotate_right(Node* node);
+            /* Interface functions (Node) */
+            static void print(std::ostream& os, const Node* node, const int depth = 0);
+            static size_type get_size(const Node* node) noexcept;
+            static size_type get_height(const Node* node) noexcept;
             static Node* find(const T& val) noexcept;
             static bool contains(const T& val) noexcept;
             template<typename V>
@@ -87,14 +88,13 @@ namespace data
             template<typename V>
             static Node* remove(V&& val, Node* node);
 
+        private:
+
             /* Bookkeeping functions */
+            static Node* rotate_left(Node* node);
+            static Node* rotate_right(Node* node);
             static void update_stats(Node* node);
             static int delta(const Node* node) noexcept;
-            static size_type get_size(const Node* node) noexcept;
-            static size_type get_height(const Node* node) noexcept;
-            static void print(std::ostream& os, const Node* node, const int depth = 0);
-
-        private:
 
             /* Fields (Node) */
             Node* parent_ = nullptr;

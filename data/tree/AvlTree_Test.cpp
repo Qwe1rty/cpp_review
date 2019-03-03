@@ -72,7 +72,7 @@ int main()
     print_stats(int_tree);
     insert_int(50);
     insert_int(40);
-    insert_int(30); // Causes right rotation at root
+    insert_int(30); // Causes right rotation at depth 1 (root)
     insert_int(20);
     insert_int(10); // Causes right rotation at depth 2
     insert_int(35); // Causes right-left rotation at depth 2
