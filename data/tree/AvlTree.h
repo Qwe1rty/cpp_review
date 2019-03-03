@@ -47,20 +47,20 @@ namespace data
 
         /* Relational operator overloads */
         template<typename U>
-        friend bool operator== (const AvlTree<U>& lhs, const AvlTree<U>& rhs);
+        friend bool operator== (const AvlTree<U>&, const AvlTree<U>&);
         template<typename U>
-        friend bool operator!= (const AvlTree<U>& lhs, const AvlTree<U>& rhs);
+        friend bool operator!= (const AvlTree<U>&, const AvlTree<U>&);
         template<typename U>
-        friend bool operator<  (const AvlTree<U>& lhs, const AvlTree<U>& rhs);
+        friend bool operator<  (const AvlTree<U>&, const AvlTree<U>&);
         template<typename U>
-        friend bool operator<= (const AvlTree<U>& lhs, const AvlTree<U>& rhs);
+        friend bool operator<= (const AvlTree<U>&, const AvlTree<U>&);
         template<typename U>
-        friend bool operator>  (const AvlTree<U>& lhs, const AvlTree<U>& rhs);
+        friend bool operator>  (const AvlTree<U>&, const AvlTree<U>&);
         template<typename U>
-        friend bool operator>= (const AvlTree<U>& lhs, const AvlTree<U>& rhs);
+        friend bool operator>= (const AvlTree<U>&, const AvlTree<U>&);
 
         /* Other operator overloads */
-        friend std::ostream& operator<< <T>(std::ostream& os, const data::AvlTree<T>& tree);
+        friend std::ostream& operator<< <T>(std::ostream&, const AvlTree<T>&);
 
     private:
 
@@ -71,11 +71,11 @@ namespace data
 
             /* Special member functions (Node) */
             Node() = delete;
-            Node(const T& src, Node* parent, Node* left, Node* right);
-            Node(T&& src, Node* parent, Node* left, Node* right);
             ~Node() = default;
             Node(const Node& src);
             Node(Node&& src) noexcept;
+            explicit Node(const T& src);
+            explicit Node(T&& src);
 
             /* AVL functions */
             static Node* rotate_left(Node* node);

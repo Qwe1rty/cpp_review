@@ -72,26 +72,24 @@ inline bool AvlTree<T>::empty() const noexcept
 template<typename T>
 inline void AvlTree<T>::remove(const T& val)
 {
-    head_ = std::make_unique<Node>(*Node::remove(val, head_.release()));
+    head_.reset(Node::remove(val, head_.release()));
 }
 
 template<typename T>
 inline void AvlTree<T>::remove(T&& val)
 {
-    head_ = std::make_unique<Node>(*Node::remove(std::move(val), head_.release()));
+    head_.reset(Node::remove(std::move(val), head_.release()));
 }
 
 template<typename T>
 inline void AvlTree<T>::insert(const T& val)
 {
-//    head_ = std::make_unique<Node>(*Node::insert(val, head_.release()));
     head_.reset(Node::insert(val, head_.release()));
 }
 
 template<typename T>
 inline void AvlTree<T>::insert(T&& val)
 {
-//    head_ = std::make_unique<Node>(*Node::insert(std::move(val), head_.release()));
     head_.reset(Node::insert(std::move(val), head_.release()));
 }
 
@@ -100,7 +98,7 @@ template<typename T>
 template<typename...Args>
 inline void AvlTree<T>::emplace(Args&&... args)
 {
-    insert(T(std::forward(args)...)); // Unavoidable copy if T is not movable
+    insert(T(std::forward<Args>(args)...)); // Unavoidable copy if T is not movable
 }
 
 /*
@@ -113,9 +111,9 @@ inline void AvlTree<T>::emplace(Args&&... args)
 // https://stackoverflow.com/questions/38082022/operator-overloading-namespaces-and-templates
 namespace data {
     template<typename T>
-    std::ostream& operator<< (std::ostream& os, const data::AvlTree<T>& tree)
+    std::ostream& operator<< (std::ostream& os, const AvlTree<T>& tree)
     {
-        data::AvlTree<T>::Node::print(os, tree.head_.get());
+        AvlTree<T>::Node::print(os, tree.head_.get());
         return os;
     }
 }
@@ -125,11 +123,21 @@ namespace data {
  */
 
 template<typename T>
-inline data::AvlTree<T>::Node::Node(const T& src, Node* parent, Node* left, Node* right) :
+inline data::AvlTree<T>::Node::Node(const T& src) :
         val_(std::make_unique<T>(src)),
-        parent_(parent),
-        left_(std::unique_ptr<Node>(left)),
-        right_(std::unique_ptr<Node>(right)),
+        parent_(nullptr),
+        left_(nullptr),
+        right_(nullptr),
+        size_(1),
+        height_(1)
+{}
+
+template<typename T>
+inline data::AvlTree<T>::Node::Node(T&& src) :
+        val_(std::make_unique<T>(std::move(src))),
+        parent_(nullptr),
+        left_(nullptr),
+        right_(nullptr),
         size_(1),
         height_(1)
 {}
@@ -146,10 +154,7 @@ typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::rotate_left(Node* node)
 
     // Transfer ownership of node->right_->left_ to node
     node->right_ = std::move(newHead->left_);
-    if (node->right_)
-    {
-        node->right_->parent_ = node;
-    }
+    if (node->right_) { node->right_->parent_ = node; }
 
     // Made newHead the new head
     node->parent_ = newHead;
@@ -167,10 +172,7 @@ typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::rotate_right(Node* node
 
     // Transfer ownership of node->left_->right_ to node
     node->left_ = std::move(newHead->right_);
-    if (node->left_)
-    {
-        node->left_->parent_ = node;
-    }
+    if (node->left_) { node->left_->parent_ = node; }
 
     // Made newHead the new head
     node->parent_ = newHead;
@@ -186,22 +188,20 @@ template<typename T>
 template<typename V>
 typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::insert(V&& val, Node* node)
 {
-    if (node == nullptr) { return new Node(val, nullptr, nullptr, nullptr); }
+    if (node == nullptr) { return new Node(std::forward<V>(val)); }
 
     // Standard BST insertion
     if (*node->val_ > val)
     {
-        Node* newLeft = insert(std::move(val), node->left_.release());
-        newLeft->parent_ = node;
-        node->left_.reset(newLeft);
+        node->left_.reset(insert(std::forward<V>(val), node->left_.release()));
+        node->left_->parent_ = node;
     }
     else if (*node->val_ < val)
     {
-        Node* newRight = insert(std::move(val), node->right_.release());
-        newRight->parent_ = node;
-        node->right_.reset(newRight);
+        node->right_.reset(insert(std::forward<V>(val), node->right_.release()));
+        node->right_->parent_ = node;
     }
-    Node::update_stats(node);
+    update_stats(node);
 
     // Rebalance tree, and return the resulting new head
     Node* newHead = node;
@@ -211,21 +211,19 @@ typename data::AvlTree<T>::Node* data::AvlTree<T>::Node::insert(V&& val, Node* n
         {
             if (Node::delta(node->left_.get()) > 0)
             {
-                Node* newLeft = Node::rotate_left(node->left_.release());
-                newLeft->parent_ = node;
-                node->left_.reset(newLeft);
+                node->left_.reset(rotate_left(node->left_.release()));
+                node->left_->parent_ = node;
             }
-            newHead = Node::rotate_right(node);
+            newHead = rotate_right(node);
         }
         else if (delta > 1)
         {
             if (Node::delta(node->right_.get()) < 0)
             {
-                Node* newRight = Node::rotate_right(node->right_.release());
-                newRight->parent_ = node;
-                node->right_.reset(newRight);
+                node->right_.reset(rotate_right(node->right_.release()));
+                node->right_->parent_ = node;
             }
-            newHead = Node::rotate_left(node);
+            newHead = rotate_left(node);
         }
     }
 
@@ -247,19 +245,19 @@ inline void data::AvlTree<T>::Node::update_stats(Node* node)
 }
 
 template<typename T>
-inline int data::AvlTree<T>::Node::delta(const Node *node) noexcept
+inline int data::AvlTree<T>::Node::delta(const Node* node) noexcept
 {
     return get_height(node->right_.get()) - get_height(node->left_.get());
 }
 
 template<typename T>
-inline typename data::AvlTree<T>::size_type data::AvlTree<T>::Node::get_size(const Node *node) noexcept
+inline typename data::AvlTree<T>::size_type data::AvlTree<T>::Node::get_size(const Node* node) noexcept
 {
     return node ? node->size_ : 0;
 }
 
 template<typename T>
-inline typename data::AvlTree<T>::size_type data::AvlTree<T>::Node::get_height(const Node *node) noexcept
+inline typename data::AvlTree<T>::size_type data::AvlTree<T>::Node::get_height(const Node* node) noexcept
 {
     return node ? node->height_ : 0;
 }
