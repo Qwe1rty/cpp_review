@@ -11,17 +11,17 @@
 namespace data
 {
     template<typename T> class AvlTree;
-    template<typename T> bool operator== (const AvlTree<T>&, const AvlTree&);
-    template<typename T> bool operator!= (const AvlTree<T>&, const AvlTree&);
-    template<typename T> bool operator<  (const AvlTree<T>&, const AvlTree&);
-    template<typename T> bool operator<= (const AvlTree<T>&, const AvlTree&);
-    template<typename T> bool operator>  (const AvlTree<T>&, const AvlTree&);
-    template<typename T> bool operator>= (const AvlTree<T>&, const AvlTree&);
+    template<typename T> bool operator== (const AvlTree<T>&, const AvlTree<T>&);
+    template<typename T> bool operator!= (const AvlTree<T>&, const AvlTree<T>&);
+    template<typename T> bool operator<  (const AvlTree<T>&, const AvlTree<T>&);
+    template<typename T> bool operator<= (const AvlTree<T>&, const AvlTree<T>&);
+    template<typename T> bool operator>  (const AvlTree<T>&, const AvlTree<T>&);
+    template<typename T> bool operator>= (const AvlTree<T>&, const AvlTree<T>&);
     template<typename T> std::ostream& operator<< (std::ostream&, const AvlTree<T>&);
 
     template<typename T>
     class AvlTree final
-    {
+        {
     public:
 
         /* Aliases */
@@ -35,21 +35,21 @@ namespace data
         /* Special member functions */
         AvlTree()  = default;
         ~AvlTree() = default;
-        AvlTree(const AvlTree<T>& src);
-        AvlTree(AvlTree<T>&& src) noexcept;
-        AvlTree<T>& operator= (const AvlTree<T>& src);
-        AvlTree<T>& operator= (AvlTree<T>&& src) noexcept;
+        AvlTree(const AvlTree<T>&);
+        AvlTree(AvlTree<T>&&) noexcept;
+        AvlTree<T>& operator= (const AvlTree<T>&);
+        AvlTree<T>& operator= (AvlTree<T>&&) noexcept;
 
         /* Interface functions */
         size_type size() const noexcept;
         size_type height() const noexcept;
-        bool contains(const T& val) const noexcept;
+        bool contains(const T&) const noexcept;
         bool empty() const noexcept;
-        void remove(const T& val);
-        void remove(T&& val);
-        void insert(const T& val);
-        void insert(T&& val);
-        template<typename...Args> void emplace(Args&&... args);
+        void remove(const T&);
+        void remove(T&&);
+        void insert(const T&);
+        void insert(T&&);
+        template<typename...Args> void emplace(Args&&...);
 
         /* Relational operator overloads */
         friend bool operator== <T>(const AvlTree<T>&, const AvlTree<T>&);
@@ -72,29 +72,29 @@ namespace data
             /* Special member functions (Node) */
             Node() = delete;
             ~Node() = default;
-            Node(const Node& src);
-            Node(Node&& src) noexcept;
-            explicit Node(const T& src);
-            explicit Node(T&& src);
+            Node(const Node&);
+            Node(Node&&) noexcept;
+            explicit Node(const T&);
+            explicit Node(T&&);
 
             /* Interface functions (Node) */
-            static void print(std::ostream& os, const Node* node, const int depth = 0);
-            static size_type get_size(const Node* node) noexcept;
-            static size_type get_height(const Node* node) noexcept;
-            static Node* find(const T& val) noexcept;
-            static bool contains(const T& val) noexcept;
+            static void print(std::ostream&, const std::unique_ptr<Node>&, const int depth = 0);
+            static size_type get_size(const std::unique_ptr<Node>&) noexcept;
+            static size_type get_height(const std::unique_ptr<Node>&) noexcept;
+            static Node* find(const T&) noexcept;
+            static bool contains(const T&) noexcept;
             template<typename V>
-            static Node* insert(V&& val, Node* node);
+            static std::unique_ptr<Node> insert(V&&, std::unique_ptr<Node>);
             template<typename V>
-            static Node* remove(V&& val, Node* node);
+            static std::unique_ptr<Node> remove(V&&, std::unique_ptr<Node>);
 
         private:
 
             /* Bookkeeping functions */
-            static Node* rotate_left(Node* node);
-            static Node* rotate_right(Node* node);
-            static void update_stats(Node* node);
-            static int delta(const Node* node) noexcept;
+            static std::unique_ptr<Node> rotate_left(std::unique_ptr<Node>);
+            static std::unique_ptr<Node> rotate_right(std::unique_ptr<Node>);
+            static int delta(const std::unique_ptr<Node>&) noexcept;
+            static void update_stats(Node*);
 
             /* Fields (Node) */
             Node* parent_ = nullptr;
