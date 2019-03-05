@@ -52,12 +52,12 @@ namespace data
         template<typename...Args> void emplace(Args&&...);
 
         /* Relational operator overloads */
-        friend bool operator== <T>(const AvlTree<T>&, const AvlTree<T>&);
-        friend bool operator!= <T>(const AvlTree<T>&, const AvlTree<T>&);
-        friend bool operator<  <T>(const AvlTree<T>&, const AvlTree<T>&);
-        friend bool operator<= <T>(const AvlTree<T>&, const AvlTree<T>&);
-        friend bool operator>  <T>(const AvlTree<T>&, const AvlTree<T>&);
-        friend bool operator>= <T>(const AvlTree<T>&, const AvlTree<T>&);
+        friend bool operator== <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
+        friend bool operator!= <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
+        friend bool operator<  <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
+        friend bool operator<= <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
+        friend bool operator>  <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
+        friend bool operator>= <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
 
         /* Other operator overloads */
         friend std::ostream& operator<< <T>(std::ostream&, const AvlTree<T>&);
@@ -76,6 +76,8 @@ namespace data
             Node(Node&&) noexcept;
             explicit Node(const T&);
             explicit Node(T&&);
+            Node& operator= (const Node&);
+            Node& operator= (Node&&) noexcept;
 
             /* Interface functions (Node) */
             static void print(std::ostream&, const std::unique_ptr<Node>&, const int depth = 0);
@@ -90,9 +92,11 @@ namespace data
 
         private:
 
-            /* Bookkeeping functions */
+            /* AVL functions */
+            static std::unique_ptr<Node> rebalance(std::unique_ptr<Node>);
             static std::unique_ptr<Node> rotate_left(std::unique_ptr<Node>);
             static std::unique_ptr<Node> rotate_right(std::unique_ptr<Node>);
+            static std::unique_ptr<Node> successor(Node*);
             static int delta(const std::unique_ptr<Node>&) noexcept;
             static void update_stats(Node*);
 
