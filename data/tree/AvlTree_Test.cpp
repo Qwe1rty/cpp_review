@@ -89,17 +89,17 @@ int main()
     data::AvlTree<Movable> mov_tree;
     data::AvlTree<Copyable> cpy_tree;
 
-    auto insert_int = [&int_tree](int val)
+    auto insert_int = [](data::AvlTree<int>& tree, int val)
     {
-        int_tree.insert(val);
-        print_stats<int>(int_tree);
-        print_tree<int>(int_tree);
+        tree.insert(val);
+        print_stats<int>(tree);
+        print_tree<int>(tree);
     };
-    auto remove_int = [&int_tree](int val)
+    auto remove_int = [](data::AvlTree<int>& tree, int val)
     {
-        int_tree.remove(val);
-        print_stats<int>(int_tree);
-        print_tree<int>(int_tree);
+        tree.remove(val);
+        print_stats<int>(tree);
+        print_tree<int>(tree);
     };
     auto insert_mov = [&mov_tree](int val)
     {
@@ -115,22 +115,22 @@ int main()
     };
 
     print_stats(int_tree);
-    insert_int(50);
-    insert_int(40);
-    insert_int(30); // Causes right rotation at depth 1 (root)
-    insert_int(20);
-    insert_int(10); // Causes right rotation at depth 2
-    insert_int(35); // Causes right-left rotation at depth 2
-    insert_int(70);
-    insert_int(80); // Causes left rotation at depth 3
-    insert_int(60); // Causes right-left rotation at depth 2
-    insert_int(15); // Causes left-right rotation at depth 2
-    insert_int(15); // Should do nothing
-    remove_int(15);
-    remove_int(20); // Causes left rotation at depth 1 (root)
-    remove_int(30); // Deleting node w/ two children, successor once removed
-    remove_int(35); // Deleting node w/ two children, successor immediate
-    // TODO: test root delete case
+    insert_int(int_tree, 50);
+    insert_int(int_tree, 40);
+    insert_int(int_tree, 30); // Causes right rotation at depth 1 (root)
+    insert_int(int_tree, 20);
+    insert_int(int_tree, 10); // Causes right rotation at depth 2
+    insert_int(int_tree, 35); // Causes right-left rotation at depth 2
+    insert_int(int_tree, 70);
+    insert_int(int_tree, 80); // Causes left rotation at depth 3
+    insert_int(int_tree, 60); // Causes right-left rotation at depth 2
+    insert_int(int_tree, 15); // Causes left-right rotation at depth 2
+    insert_int(int_tree, 15); // Should do nothing
+    remove_int(int_tree, 15);
+    remove_int(int_tree, 20); // Causes left rotation at depth 1 (root)
+    remove_int(int_tree, 30); // Deleting node w/ two children, successor once removed
+    remove_int(int_tree, 35); // Deleting node w/ two children, successor immediate
+    remove_int(int_tree, 50);
 
     std::cout << std::endl;
 
@@ -145,4 +145,10 @@ int main()
     insert_cpy(3);
     insert_cpy(2);
     insert_cpy(1);
+
+    std::cout << std::endl;
+
+    data::AvlTree<int> int_tree_copy = int_tree;
+    insert_int(int_tree_copy, 100);
+    insert_int(int_tree, 0);
 }

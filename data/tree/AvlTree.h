@@ -21,7 +21,7 @@ namespace data
 
     template<typename T>
     class AvlTree final
-        {
+    {
     public:
 
         /* Aliases */

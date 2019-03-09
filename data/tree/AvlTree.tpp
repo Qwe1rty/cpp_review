@@ -2,6 +2,7 @@
 // Created by Caleb Choi on 24/02/2019.
 //
 
+#include <iostream>
 #include "AvlTree.h"
 
 using data::AvlTree;
@@ -13,7 +14,7 @@ using data::AvlTree;
 
 template<typename T>
 inline AvlTree<T>::AvlTree(const AvlTree<T>& src) :
-        head_(new Node(*src.head_))
+        head_(src.head_ ? std::make_unique<Node>(*src.head_) : nullptr)
 {}
 
 template<typename T>
@@ -122,9 +123,11 @@ namespace data {
  * Special member functions (Node)
  */
 
-//template<typename T>
-//inline AvlTree<T>::Node::Node(const Node& src)
-//{}
+template<typename T>
+inline AvlTree<T>::Node::Node(const Node& src)
+{
+    *this = src;
+}
 
 template<typename T>
 inline AvlTree<T>::Node::Node(Node&& src) noexcept
@@ -153,16 +156,36 @@ inline AvlTree<T>::Node::Node(T&& src) :
 {}
 
 template<typename T>
+inline typename AvlTree<T>::Node& AvlTree<T>::Node::operator= (const Node& src)
+{
+    if (this != &src)
+    {
+        parent_ = src.parent_;
+        size_ = src.size_;
+        height_ = src.height_;
+
+        val_ = src.val_ ? std::make_unique<T>(*src.val_) : nullptr;
+        left_  = src.left_  ? std::make_unique<Node>(*src.left_)  : nullptr;
+        right_ = src.right_ ? std::make_unique<Node>(*src.right_) : nullptr;
+
+        if (left_)  { left_->parent_  = this; }
+        if (right_) { right_->parent_ = this; }
+    }
+    return *this;
+}
+
+template<typename T>
 inline typename AvlTree<T>::Node& AvlTree<T>::Node::operator= (Node&& src) noexcept
 {
     if (this != &src)
     {
-        val_ = std::move(src.val_);
         parent_ = src.parent_;
-        left_ = std::move(src.left_);
-        right_ = std::move(src.right_);
         size_ = src.size_;
         height_ = src.height_;
+
+        val_ = std::move(src.val_);
+        left_  = std::move(src.left_);
+        right_ = std::move(src.right_);
 
         if (left_)  { left_->parent_  = this; }
         if (right_) { right_->parent_ = this; }
