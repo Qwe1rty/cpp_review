@@ -3,5 +3,5 @@ project(CLion)
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES main.cpp data/tree/AvlTree.tpp data/tree/AvlTree.h poly/Basic.h algo/Strings.cpp)
+set(SOURCE_FILES main.cpp data/tree/AvlTree.tpp data/tree/AvlTree.h poly/dynamic/Base.h algo/Strings.cpp test/Tester.h test/Tester.cpp)
 add_executable(CLion ${SOURCE_FILES})
