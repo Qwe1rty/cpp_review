@@ -52,6 +52,7 @@ namespace data
         template<typename...Args> void emplace(Args&&...);
 
         /* Relational operator overloads */
+        // https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
         friend bool operator== <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
         friend bool operator!= <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
         friend bool operator<  <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
