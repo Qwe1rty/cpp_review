@@ -16,8 +16,8 @@ namespace Test
     {};
 
     template<typename Return,     typename... Args    >
-    template<typename ReturnImpl, typename... ArgsImpl>
-    bool Tester<Return, Args...>::run(std::string name, ReturnImpl&& expected, ArgsImpl&&... parameters)
+    template<typename Return_ = Return, typename... Args_ = Args>
+    bool Tester<Return, Args...>::run(std::string name, Return_&& expected, Args_&&... parameters)
     {
         std::replace(name.begin(), name.end(), ' ', '_');
         name += "_test";
@@ -25,7 +25,7 @@ namespace Test
         std::cout << "============================================================\n"
                   << "TEST: " << name << '\n';
 
-        ReturnImpl actual = test_function_(std::forward<ArgsImpl>(parameters)...);
+        Return_ actual = test_function_(std::forward<Args_>(parameters)...);
         bool result = expected == actual;
 
         if (!result)
