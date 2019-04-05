@@ -15,6 +15,7 @@ namespace dynamic
     public:
         Base()          = default;
         virtual ~Base() = default;
+        Base(int);
 
         Base(const Base&)                = delete;
         Base(Base&&) noexcept            = delete;
@@ -25,32 +26,32 @@ namespace dynamic
         virtual std::unique_ptr<Base> clone() const;
         virtual std::unique_ptr<Base> move()  noexcept;
 
+        int get_int() const;
+
     private:
         int int_resource_ = 111;
     };
 
-    class Derived1 : public Base
+    class Derived : public Base
     {
-        Derived1();
-        Derived1(std::string);
-        ~Derived1() override;
+    public:
+        Derived()           = default;
+        ~Derived() override = default;
+        Derived(std::string, int = 222);
 
-        Derived1(const Derived1&);
-        Derived1(Derived1&&) noexcept;
-        Derived1& operator=(const Derived1&);
-        Derived1& operator=(Derived1&&) noexcept;
+        Derived(const Derived&)                = delete;
+        Derived(Derived&&) noexcept            = delete;
+        Derived& operator=(const Derived&)     = delete;
+        Derived& operator=(Derived&&) noexcept = delete;
 
         void something()                const override;
         std::unique_ptr<Base> clone()   const override;
         std::unique_ptr<Base> move() noexcept override;
 
+        std::string get_string() const;
+
     private:
         std::string string_resource_;
-    };
-
-    class Derived2 : public Base
-    {
-
     };
 };
 

@@ -16,8 +16,8 @@ namespace Test
     public:
         explicit Tester(const std::function<Return(Args...)>&);
 
-        template<typename Return_ = Return, typename... Args_ = Args>
-        bool run(std::string, Return_&&, Args_&&...);
+        template<typename Return_ = Return>
+        bool run(std::string, Return_&&, Args&&...);
         std::tuple<Args...> tupler(Args&&...);
 
     private:

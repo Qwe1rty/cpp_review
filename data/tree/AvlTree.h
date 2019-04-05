@@ -53,6 +53,7 @@ namespace data
 
         /* Relational operator overloads */
         // https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
+        // http://web.mst.edu/~nmjxv3/articles/templates.html
         friend bool operator== <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
         friend bool operator!= <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);
         friend bool operator<  <T>(const AvlTree<T>& lhs, const AvlTree<T>& rhs);

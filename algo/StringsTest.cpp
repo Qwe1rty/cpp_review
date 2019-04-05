@@ -20,7 +20,7 @@ struct AnagramTest
 
 void isAnagramTest()
 {
-    Test::Tester<bool, std::string, std::string> anagramTester(isAnagram);
+    Test::Tester<bool, std::string, std::string> anagramTester(is_anagram);
 
     std::vector<AnagramTest<bool, std::string, std::string>> tests =
         {

@@ -3,10 +3,9 @@
 //
 
 #include <iostream>
-
 #include <map>
 
-bool isAnagram(std::string src, std::string dst)
+bool is_anagram(const std::string& src, const std::string& dst)
 {
     if (src.length() != dst.length()) return false;
 

@@ -10,8 +10,10 @@ set(SOURCE_FILES
         algo/Strings.cpp
         test/Tester.h
         test/Tester.tpp
-        poly/dynamic/Base.h
-        poly/dynamic/Base.cpp
+        poly/dynamic/Basic.h
+        poly/dynamic/Basic.cpp
         data/misc/CaS.cpp
-        data/misc/CaS.h)
+        data/misc/CaS.h
+        data/misc/SFINAE.tpp
+        data/misc/SFINAE.h)
 add_executable(CLion ${SOURCE_FILES})
