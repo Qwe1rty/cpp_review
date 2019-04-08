@@ -5,7 +5,16 @@
 #include <iostream>
 #include <map>
 
-bool is_anagram(const std::string& src, const std::string& dst)
+/*
+ * Valid Anagram
+ * Easy
+ *
+ * speed: 20 ms, faster than 45.33%
+ * memory: 9.2MB, less than 36.61%
+ *
+ * https://leetcode.com/problems/valid-anagram/
+ */
+bool isAnagram(const std::string& src, const std::string& dst)
 {
     if (src.length() != dst.length()) return false;
 

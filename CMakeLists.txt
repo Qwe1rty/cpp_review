@@ -15,5 +15,5 @@ set(SOURCE_FILES
         data/misc/CaS.cpp
         data/misc/CaS.h
         data/misc/SFINAE.tpp
-        data/misc/SFINAE.h)
+        data/misc/SFINAE.h algo/Numbers.cpp)
 add_executable(CLion ${SOURCE_FILES})
