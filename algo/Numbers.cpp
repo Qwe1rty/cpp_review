@@ -114,75 +114,108 @@ int maxArea(std::vector<int>& height) {
  * 4Sum
  * Medium
  *
- * could not solve
+ * speed: 12ms, faster than 99.89%
+ * memory: 9.2MB, less than 100%
  *
  * https://leetcode.com/problems/4sum/
  */
 std::vector<std::vector<int>> fourSum(std::vector<int>& nums, int target) {
 
+    int n = nums.size();
+
     auto resultVector = std::vector<std::vector<int>>();
-    if (nums.size() < 4) return std::move(resultVector);
+    if (n < 4) return std::move(resultVector);
 
     std::sort(nums.begin(), nums.end());
 
-    auto orderedPairs = std::vector<std::pair<int, int>>();
-    auto betaTable    = std::map<int, std::map<int, int>>();
+    for (int l = 0; l < n - 3; l++) {
+        if (l > 0 && nums[l] == nums[l - 1]) continue;
 
-    {
-        auto seenPairs = std::map<int, std::set<int>>();
+        for (int r = l + 1; r < n - 2; r++) {
+            if (r > l + 1 && nums[r] == nums[r - 1]) continue;
 
-        for (int i = 0; i < nums.size() - 1; i++) {
-            if (!seenPairs.count(nums.at(i))) {
+            int li = r + 1, ri = n - 1, prune = target - nums[l] - nums[r];
+            while (li < ri) {
 
-                for (int j = i + 1; j < nums.size(); j++) {
-                    if (!seenPairs[nums.at(i)].count(nums.at(j))) {
+                if (nums[li] + nums[li + 1] > prune) break;
+                if (nums[ri] + nums[ri - 1] < prune) break;
 
-                        seenPairs[nums.at(i)].insert(nums.at(j));
-                        orderedPairs.emplace_back(i, j);
-                        betaTable[nums.at(i) + nums.at(j)][i] = j;
+                if      (li > r + 1 && nums[li] == nums[li - 1]) { ++li; continue; }
+                else if (ri < n - 1 && nums[ri] == nums[ri + 1]) { --ri; continue; }
 
-                    }
+                int sum = nums[l] + nums[li] + nums[ri] + nums[r];
+                if      (sum < target) ++li;
+                else if (sum > target) --ri;
+                else {
+                    resultVector.push_back({nums[l], nums[li], nums[ri], nums[r]});
+                    ++li;
+                    --ri;
                 }
-
             }
         }
     }
 
-    {
-        auto seenPairs = std::map<int, std::set<int>>();
+    return std::move(resultVector);
+}
 
-        for (const auto& orderedPair : orderedPairs) {
 
-            int i = orderedPair.first,
-                j = orderedPair.second;
-            if (!seenPairs[i].count(j)) {
+/*
+ * 4Sum (Old solution)
+ * Medium
+ *
+ * speed: 348 ms, faster than 6.58%
+ * memory: 86.7 MB, less than 5.21%
+ *
+ * https://leetcode.com/problems/4sum/
+ */
+std::vector<std::vector<int>> fourSumOld(std::vector<int>& nums, int target) {
 
-                int alpha = nums.at(i) + nums.at(j),
-                    beta  = target - alpha;
-                const auto& betaEntry = betaTable[beta];
+    auto resultVector = std::vector<std::vector<int>>();
+    if (nums.size() < 4) return std::move(resultVector);
 
-                for (const auto& betaPair : betaEntry) {
+    std::sort(nums.begin(), nums.end());
+    auto alphaTable = std::map<int, std::map<int, int>>();
+    auto seenPairs  = std::map<int, std::set<int>>();
 
-                    int bi = betaPair.first,
-                        bj = betaPair.second;
-                    if (i != bi &&
-                        i != bj &&
-                        j != bi &&
-                        j != bj) {
+    for (int i = 0; i < nums.size() - 1; i++) {
+        int ival = nums[i];
+        if (seenPairs.count(ival)) continue;
 
-                        std::vector<int> sol = {
-                            nums.at(i),
-                            nums.at(j),
-                            nums.at(bi),
-                            nums.at(bj)
-                        };
-                        resultVector.push_back(std::move(sol));
-                    }
-                    seenPairs[i].insert(j);
-                    seenPairs[bi].insert(bj);
+        for (int j = i + 1; j < nums.size(); j++) {
+            int jval = nums[j];
+            if (seenPairs[ival].count(jval)) continue;
+
+            seenPairs[ival].insert(jval);
+            alphaTable[ival + jval][i] = j;
+        }
+    }
+
+    seenPairs.clear();
+
+    for (int bj = nums.size() - 1; bj > 0; bj--) {
+        int bjval = nums[bj];
+        if (seenPairs.count(bjval)) continue;
+
+        for (int bi = bj - 1; bi >= 0; bi--) {
+            int bival = nums[bi];
+            if (seenPairs[bjval].count(bival)) continue;
+
+            seenPairs[bjval].insert(bival);
+
+            int beta  = bival + bjval,
+                alpha = target - beta;
+
+            const auto& alphaPairs = alphaTable[alpha];
+            for (const auto& alphaPair : alphaPairs) {
+                if (alphaPair.second < bi) {
+                    resultVector.push_back({
+                        nums[alphaPair.first],
+                        nums[alphaPair.second],
+                        bival,
+                        bjval
+                    });
                 }
             }
-
         }
     }
 
