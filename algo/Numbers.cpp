@@ -114,6 +114,7 @@ int maxArea(std::vector<int>& height) {
  * 4Sum
  * Medium
  *
+ * pruning solution
  * speed: 12ms, faster than 99.89%
  * memory: 9.2MB, less than 100%
  *
@@ -160,15 +161,16 @@ std::vector<std::vector<int>> fourSum(std::vector<int>& nums, int target) {
 
 
 /*
- * 4Sum (Old solution)
+ * 4Sum
  * Medium
  *
- * speed: 348 ms, faster than 6.58%
- * memory: 86.7 MB, less than 5.21%
+ * 2Sum + 2Sum = 4Sum strategy solution
+ * speed: 348ms, faster than 6.58%
+ * memory: 86.7MB, less than 5.21%
  *
  * https://leetcode.com/problems/4sum/
  */
-std::vector<std::vector<int>> fourSumOld(std::vector<int>& nums, int target) {
+std::vector<std::vector<int>> fourSum2(std::vector<int>& nums, int target) {
 
     auto resultVector = std::vector<std::vector<int>>();
     if (nums.size() < 4) return std::move(resultVector);
@@ -220,4 +222,78 @@ std::vector<std::vector<int>> fourSumOld(std::vector<int>& nums, int target) {
     }
 
     return std::move(resultVector);
+}
+
+
+/*
+ * Partition Equal Subset Sum
+ * Medium
+ *
+ * Top-down (memoization) DP solution
+ * speed: 8ms, faster than 92.42%
+ * memory: 9.9MB, less than 39.38%
+ *
+ * https://leetcode.com/problems/partition-equal-subset-sum/
+ */
+bool canPartitionImpl(
+    std::map<int, bool>& dp,
+    const std::vector<int>& nums,
+    const int sum,
+    const int index) {
+
+    if (!dp.count(sum)) {
+        if (index < 0) {
+            return false;
+        } else if (nums[index] == sum) {
+            dp[sum] = true;
+        } else if (nums[index] > sum) {
+            dp[sum] = canPartitionImpl(dp, nums, sum, index - 1);
+        } else {
+            dp[sum] = canPartitionImpl(dp, nums, sum - nums[index], index - 1) ||
+                      canPartitionImpl(dp, nums, sum, index - 1);
+        }
+    }
+    return dp[sum];
+}
+
+bool canPartition(std::vector<int>& nums) {
+
+    int sum = 0;
+    for (int i = 0; i < nums.size(); i++) sum += nums[i];
+    if (sum % 2 == 1) return false;
+
+    auto dp = std::map<int, bool>();
+    return canPartitionImpl(dp, nums, sum / 2, nums.size() - 1);
+}
+
+
+/*
+ * Partition Equal Subset Sum
+ * Medium
+ *
+ * Bottom-up (tabulation) DP solution
+ * speed: 168ms, faster than 37.96%
+ * memory: 8.5MB, less than 100%
+ *
+ * https://leetcode.com/problems/partition-equal-subset-sum/
+ */
+bool canPartition2(std::vector<int>& nums) {
+
+    int sum = 0;
+    for (int i = 0; i < nums.size(); i++) sum += nums[i];
+    if (sum % 2 == 1) return false;
+    sum /= 2;
+
+    auto dp = std::vector<bool>(sum + 1, false);
+    dp[0] = true;
+
+    for (const int& num : nums) {
+        for (int i = sum; i >= num; i--) {
+            if (num <= i) {
+                dp[i] = dp[i] || dp[i - num];
+            }
+        }
+    }
+
+    return dp[sum];
 }
