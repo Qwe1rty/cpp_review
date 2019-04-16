@@ -6,7 +6,7 @@
 #include <map>
 
 /*
- * Valid Anagram
+ * 242. Valid Anagram
  * Easy
  *
  * speed: 20 ms, faster than 45.33%

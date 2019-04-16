@@ -8,7 +8,7 @@
 #include <vector>
 
 /*
- * Pow(x, n)
+ * 50. Pow(x, n)
  * Medium
  *
  * speed: 4ms, faster than 100%
@@ -56,7 +56,7 @@ double myPow(double x, int n) {
 
 
 /*
- * Container With Most Water
+ * 11. Container With Most Water
  * Medium
  *
  * speed: 20ms, faster than 98.41%
@@ -111,7 +111,7 @@ int maxArea(std::vector<int>& height) {
 
 
 /*
- * 4Sum
+ * 18. 4Sum
  * Medium
  *
  * pruning solution
@@ -161,7 +161,7 @@ std::vector<std::vector<int>> fourSum(std::vector<int>& nums, int target) {
 
 
 /*
- * 4Sum
+ * 18. 4Sum
  * Medium
  *
  * 2Sum + 2Sum = 4Sum strategy solution
@@ -226,7 +226,7 @@ std::vector<std::vector<int>> fourSum2(std::vector<int>& nums, int target) {
 
 
 /*
- * Partition Equal Subset Sum
+ * 416. Partition Equal Subset Sum
  * Medium
  *
  * Top-down (memoization) DP solution
@@ -268,7 +268,7 @@ bool canPartition(std::vector<int>& nums) {
 
 
 /*
- * Partition Equal Subset Sum
+ * 416. Partition Equal Subset Sum
  * Medium
  *
  * Bottom-up (tabulation) DP solution
@@ -300,7 +300,7 @@ bool canPartition2(std::vector<int>& nums) {
 
 
 /*
- * Unique Paths
+ * 62. Unique Paths
  * Medium
  *
  * speed: 4ms, faster than 100%
@@ -326,7 +326,7 @@ int uniquePaths(int m, int n) {
 
 
 /*
- * Longest Increasing Subsequence
+ * 300. Longest Increasing Subsequence
  * Medium
  *
  * Bottom-up O(n^2) DP solution
@@ -348,4 +348,42 @@ int lengthOfLIS(const std::vector<int>& nums) {
     }
 
     return highest;
+}
+
+
+/*
+ * 42. Trapping Rain Water
+ * Hard
+ *
+ * Two pointers solution
+ * speed: 8ms, faster than 98.98%
+ * memory: 9.1MB, less that 99.63%
+ */
+int trap(const std::vector<int>& height) {
+
+    if (height.size() == 0) return 0;
+
+    int water = 0;
+    int l = 0, r = height.size() - 1;
+    int level = height[l] < height[r] ? height[l] : height[r];
+
+    while (l < r) {
+        if (height[l] <= height[r]) {
+            if (level > height[l]) {
+                water += level - height[l];
+            } else if (level < height[l]) {
+                level = height[l];
+            }
+            l++;
+        } else if (height[l] > height[r]) {
+            if (level > height[r]) {
+                water += level - height[r];
+            } else if (level < height[r]) {
+                level = height[r];
+            }
+            r--;
+        }
+    }
+
+    return water;
 }
