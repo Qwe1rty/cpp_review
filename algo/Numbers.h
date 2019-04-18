@@ -31,6 +31,11 @@ int uniquePaths(int m, int n);
 // 300. Longest Increasing Subsequence
 int lengthOfLIS(const std::vector<int>& nums);
 
+// 64. Minimum Path Sum
+int minPathSum(std::vector<std::vector<int>>& grid);
+
+// 221. Maximal Square
+int maximalSquare(std::vector<std::vector<char>>& matrix);
 
 /*
  * Hard

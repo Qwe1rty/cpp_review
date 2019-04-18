@@ -259,7 +259,7 @@ bool canPartitionImpl(
 bool canPartition(std::vector<int>& nums) {
 
     int sum = 0;
-    for (int i = 0; i < nums.size(); i++) sum += nums[i];
+    for (const int num : nums) sum += num;
     if (sum % 2 == 1) return false;
 
     auto dp = std::map<int, bool>();
@@ -361,7 +361,7 @@ int lengthOfLIS(const std::vector<int>& nums) {
  */
 int trap(const std::vector<int>& height) {
 
-    if (height.size() == 0) return 0;
+    if (height.empty()) return 0;
 
     int water = 0;
     int l = 0, r = height.size() - 1;
@@ -386,4 +386,59 @@ int trap(const std::vector<int>& height) {
     }
 
     return water;
+}
+
+
+/*
+ * 64. Minimum Path Sum
+ * Medium
+ *
+ * speed: 12ms, faster than 98.07%
+ * memory: 10.6MB, less than 99.37%
+ */
+int minPathSum(std::vector<std::vector<int>>& grid) {
+
+    if (grid.empty() || grid[0].empty()) return 0;
+
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[0].size(); j++) {
+            if (!(i == 0 && j == 0)) {
+                if      (i == 0) grid[i][j] += grid[i][j - 1];
+                else if (j == 0) grid[i][j] += grid[i - 1][j];
+                else grid[i][j] += grid[i - 1][j] < grid[i][j - 1] ? grid[i - 1][j] : grid[i][j - 1];
+            }
+        }
+    }
+
+    return grid[grid.size() - 1][grid[0].size() - 1];
+}
+
+
+/*
+ * 221. Maximal Square
+ * Medium
+ *
+ * speed: 20ms, faster than 98.02%
+ * memory: 10.4MB, less than 100%
+ */
+int maximalSquare(std::vector<std::vector<char>>& matrix) {
+
+    if (matrix.empty() || matrix[0].empty()) return 0;
+
+    int largest = 0;
+    for (int i = 0; i < matrix.size(); i++) {
+        for (int j = 0; j < matrix[0].size(); j++) {
+            if (i != 0 && j != 0 && matrix[i][j] == '1') {
+                matrix[i][j] = 1 + std::min({
+                    matrix[i][j - 1],
+                    matrix[i - 1][j],
+                    matrix[i - 1][j - 1]
+                });
+            }
+            int diff = matrix[i][j] - '0';
+            if (diff > largest) largest = diff;
+        }
+    }
+
+    return largest * largest;
 }
