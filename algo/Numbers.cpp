@@ -305,6 +305,8 @@ bool canPartition2(std::vector<int>& nums) {
  *
  * speed: 4ms, faster than 100%
  * memory: 8.7MB, less than 25.41
+ *
+ * https://leetcode.com/problems/unique-paths/
  */
 int uniquePaths(int m, int n) {
 
@@ -312,8 +314,8 @@ int uniquePaths(int m, int n) {
         m,
         std::vector<int>(n, 0)
     );
-    dp[0][0] = 1;
 
+    dp[0][0] = 1;
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             if (j != 0) dp[i][j] += dp[i][j - 1];
@@ -332,6 +334,8 @@ int uniquePaths(int m, int n) {
  * Bottom-up O(n^2) DP solution
  * speed: 40ms, faster than 53.38%
  * memory: 8.8MB, less than 49.74%
+ *
+ * https://leetcode.com/problems/longest-increasing-subsequence/
  */
 int lengthOfLIS(const std::vector<int>& nums) {
 
@@ -358,6 +362,8 @@ int lengthOfLIS(const std::vector<int>& nums) {
  * Two pointers solution
  * speed: 8ms, faster than 98.98%
  * memory: 9.1MB, less that 99.63%
+ *
+ * https://leetcode.com/problems/trapping-rain-water/
  */
 int trap(const std::vector<int>& height) {
 
@@ -395,6 +401,8 @@ int trap(const std::vector<int>& height) {
  *
  * speed: 12ms, faster than 98.07%
  * memory: 10.6MB, less than 99.37%
+ *
+ * https://leetcode.com/problems/minimum-path-sum/
  */
 int minPathSum(std::vector<std::vector<int>>& grid) {
 
@@ -420,6 +428,8 @@ int minPathSum(std::vector<std::vector<int>>& grid) {
  *
  * speed: 20ms, faster than 98.02%
  * memory: 10.4MB, less than 100%
+ *
+ * https://leetcode.com/problems/maximal-square/
  */
 int maximalSquare(std::vector<std::vector<char>>& matrix) {
 
@@ -442,3 +452,100 @@ int maximalSquare(std::vector<std::vector<char>>& matrix) {
 
     return largest * largest;
 }
+
+
+/*
+ * 741. Cherry Pickup
+ * Hard
+ *
+ * one-way greedy solution
+ * incorrect solution
+ *
+ * https://leetcode.com/problems/cherry-pickup/
+ */
+int cherryPickup(std::vector<std::vector<int>>& grid) {
+
+    if (grid.empty() || grid[0].empty()) return 0;
+
+    auto dp = std::vector<std::vector<int>>(
+        grid.size(),
+        std::vector<int>(grid[0].size(), 0)
+    );
+
+    dp[0][0] = grid[0][0];
+    for (int i = 0; i < dp.size(); i++) {
+        for (int j = 0; j < dp[0].size(); j++) {
+            if (grid[i][j] == -1 || (i == 0 && j == 0)) continue;
+            else if (i == 0) dp[i][j] = grid[i][j] + dp[i][j - 1];
+            else if (j == 0) dp[i][j] = grid[i][j] + dp[i - 1][j];
+            else {
+                int m = std::max(dp[i][j - 1], dp[i - 1][j]);
+                if (m != 0) {
+                    dp[i][j] = grid[i][j] + m;
+                }
+            }
+        }
+    }
+
+    if (dp[dp.size() - 1][dp[0].size() - 1] == 0) return 0;
+
+    {
+        int i = dp.size() - 1;
+        int j = dp[0].size() - 1;
+        while ((i > 0 || j > 0) && dp[i][j] > 0) {
+            if (i == 0 && j != 0) {
+                if (dp[i][j - 1] < dp[i][j]) grid[i][j] = 0;
+                j--;
+            } else if (j == 0 && i != 0) {
+                if (dp[i - 1][j] < dp[i][j]) grid[i][j] = 0;
+                i--;
+            } else if (dp[i][j - 1] > dp[i - 1][j]) { // path is left
+                if (dp[i][j - 1] < dp[i][j]) grid[i][j] = 0;
+                j--;
+            } else {
+                if (dp[i - 1][j] < dp[i][j]) grid[i][j] = 0;
+                i--;
+            }
+        }
+        grid[0][0] = 0;
+    }
+
+    for (int i = dp.size() - 1; i >= 0; i--) {
+        for (int j = dp[0].size() - 1; j >= 0; j--) {
+            if (grid[i][j] == -1 || (i == dp.size() - 1 && j == dp[0].size() - 1)) continue;
+            else if (i == dp.size() - 1)    dp[i][j] = grid[i][j] + dp[i][j + 1];
+            else if (j == dp[0].size() - 1) dp[i][j] = grid[i][j] + dp[i + 1][j];
+            else dp[i][j] = grid[i][j] + std::max(dp[i][j + 1], dp[i + 1][j]);
+        }
+    }
+
+    return dp[0][0];
+}
+
+//[[0,1,-1],[1,0,-1],[1,1,1]]
+//[[1,1,-1],[1,-1,1],[-1,1,1]]
+//[1,1,1,1,0,0,0]
+//[0,0,0,1,0,0,0]
+//[0,0,0,1,0,0,1]
+//[1,0,0,1,0,0,0]
+//[0,0,0,1,0,0,0]
+//[0,0,0,1,0,0,0]
+//[0,0,0,1,1,1,1]
+
+// DEBUG
+//for (int i = 0; i < grid.size(); i++) {
+//std::cout << "[ ";
+//for (int j = 0; j < grid[0].size(); j++) {
+//std::cout << dp[i][j] << ' ';
+//}
+//std::cout << ']' << std::endl;
+//}
+
+// DEBUG
+//for (int i = 0; i < grid.size(); i++) {
+//std::cout << "[ ";
+//for (int j = 0; j < grid[0].size(); j++) {
+//std::cout << grid[i][j] << ' ';
+//}
+//std::cout << ']' << std::endl;
+//}

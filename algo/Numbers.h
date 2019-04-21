@@ -44,4 +44,7 @@ int maximalSquare(std::vector<std::vector<char>>& matrix);
 // 42. Trapping Rain Water
 int trap(const std::vector<int>& height);
 
+// 741. Cherry Pickup (incorrect solution)
+int cherryPickup(std::vector<std::vector<int>>& grid);
+
 #endif //CLION_NUMBERS_H
