@@ -16,7 +16,7 @@ set(SOURCE_FILES
         data/misc/CaS.h
         data/misc/SFINAE.tpp
         data/misc/SFINAE.h
-        algo/Numbers.h
-        algo/Numbers.cpp
-        )
+        algo/TwoPointers.h
+        algo/TwoPointers.cpp
+        algo/DynamicProgramming.h algo/DynamicProgramming.cpp)
 add_executable(CLion ${SOURCE_FILES})
