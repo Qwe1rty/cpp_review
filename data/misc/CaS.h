@@ -10,7 +10,7 @@ namespace Data
     class CaS
     {
     public:
-        explicit CaS(int);
+        explicit CaS(int = 0);
         CaS(const CaS&);
         CaS(CaS&&) noexcept;
         ~CaS();

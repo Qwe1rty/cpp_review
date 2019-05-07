@@ -6,7 +6,7 @@
 
 #include "CaS.h"
 
-Data::CaS::CaS(int size = 0) :
+Data::CaS::CaS(int size) :
     size_(size),
     array_(size_ ? new int[size_]() : nullptr)
 {}
@@ -28,14 +28,15 @@ Data::CaS::~CaS()
     delete array_;
 }
 
-CaS& Data::CaS::operator= (CaS src)
+Data::CaS& Data::CaS::operator= (CaS src)
     {
     swap(*this, src);
     return *this;
 }
 
-void swap(Data::CaS& a, Data::CaS& b)
+void Data::swap(Data::CaS& a, Data::CaS& b) noexcept
 {
-    std::swap(a.size_, b.size_);
-    std::swap(a.array_, b.array_);
+    using std::swap;
+    swap(a.size_, b.size_);
+    swap(a.array_, b.array_);
 }
