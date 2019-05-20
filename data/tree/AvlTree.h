@@ -82,7 +82,7 @@ namespace data
             Node& operator= (Node&&) noexcept;
 
             /* Interface functions (Node) */
-            static void print(std::ostream&, const std::unique_ptr<Node>&, const int depth = 0);
+            static void print(std::ostream&, const std::unique_ptr<Node>&, const int = 0);
             static size_type get_size(const std::unique_ptr<Node>&) noexcept;
             static size_type get_height(const std::unique_ptr<Node>&) noexcept;
             static Node* find(const T&) noexcept;

@@ -38,5 +38,8 @@ int maximalSquare(std::vector<std::vector<char>>& matrix);
 int cherryPickup(const std::vector<std::vector<int>>& grid);
 int cherryPickupI(std::vector<std::vector<int>>& grid);
 
+// 174. Dungeon Game (incorrect solution)
+int calculateMinimumHP(std::vector<std::vector<int>>& dungeon);
+
 
 #endif //CLION_DYNAMICPROGRAMMING_H
