@@ -3,3 +3,4 @@
 *.exe
 *.txt
 main.cpp
+CMakeLists.txt
